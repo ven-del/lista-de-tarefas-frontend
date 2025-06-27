@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
     return (
-      <div>
+      <div className="bg-neutral-900 h-full text-amber-50 flex justify-center items-center">
         <h1 className="text-center">
           Você deve{" "}
           <Link to="/cadastro" className="hover:underline underline-offset-4">
