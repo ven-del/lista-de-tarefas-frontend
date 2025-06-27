@@ -27,14 +27,14 @@ const Login = () => {
       if (user) {
         setToast({ type: 'success', message: `Bem-vindo, ${user.name}! Redirecionando para a página inicial...` });
         
-        // Redireciona para home após 2 segundos
+        // Redireciona para home depois de 2 segundos
         setTimeout(() => {
           navigate('/tarefas');
         }, 2000);
       } else {
         setToast({ type: 'error', message: 'Email ou senha incorretos.' });
         
-        // Remove o toast após 5 segundos
+        // Remove o toast depois de 5 segundos
         setTimeout(() => {
           setToast(null);
         }, 5000);
@@ -42,7 +42,7 @@ const Login = () => {
     } catch {
       setToast({ type: 'error', message: 'Erro ao fazer login. Tente novamente.' });
       
-      // Remove o toast após 5 segundos
+      // Remove o toast depois de 5 segundos
       setTimeout(() => {
         setToast(null);
       }, 5000);

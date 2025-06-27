@@ -1,17 +1,24 @@
 import { Link } from "react-router-dom";
+import { useTitle } from "../hooks/useTitle";
 
 const Header = () => {
+    const { headerTitle } = useTitle();
+
     return (
       <header className="flex items-center justify-between bg-neutral-900 text-white p-4 border-b border-amber-100">
-        <Link to='/' className="flex gap-3 items-center">
+        <Link to="/" className="flex gap-3 items-center">
           <img
             src="/assets/images/logo.png"
             alt="Logo do site Lista Dinâmica"
             className="w-15 h-15"
           />
-          <h1 className="text-3xl font-bold">Lista Dinâmica</h1>
+          <h1 className="text-2xl font-bold">Lista Dinâmica</h1>
         </Link>
-        <h1>Oi, eu sou o título!</h1>
+        <div>
+          <h1 className="text-3xl font-semibold text-amber-100">
+            {headerTitle}
+          </h1>
+        </div>
         <div>
           <Link
             to="/cadastro"
