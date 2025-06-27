@@ -1,6 +1,10 @@
+import Paths from "./routes/Paths";
+
 const App = () => {
   return ( 
-    <div></div>
+    <div>
+      <Paths />
+    </div>
    );
 }
  
