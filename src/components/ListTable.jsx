@@ -127,7 +127,7 @@ const ListTable = () => {
       )}
 
       {/* Botão para adicionar nova tarefa */}
-      <div className="mb-6 flex justify-end">
+      <div className="mb-6 flex justify-center md:justify-end">
         <button
           onClick={() => setShowAddForm(!showAddForm)}
           className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-amber-50 font-bold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg cursor-pointer"
@@ -144,7 +144,7 @@ const ListTable = () => {
             Adicionar Nova Tarefa
           </h3>
           <form onSubmit={handleAddTask} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Input título da tarefa */}
               <div>
                 <label
@@ -185,7 +185,7 @@ const ListTable = () => {
             </div>
 
             {/* Botões do formulário */}
-            <div className="flex gap-3 justify-end pt-4">
+            <div className="flex flex-col sm:flex-row gap-3 justify-end pt-4">
               <button
                 type="button"
                 onClick={handleCancelAdd}
@@ -216,7 +216,7 @@ const ListTable = () => {
       )}
 
       {/* Cabeçalho da tabela, info fixa */}
-      <div className="flex items-center justify-between p-4 bg-neutral-800 border-b-2 border-amber-500 text-amber-100 font-bold">
+      <div className="hidden md:flex items-center justify-between p-4 bg-neutral-800 border-b-2 border-amber-500 text-amber-100 font-bold">
         <div className="w-24 text-center">Concluído</div>
         <div className="flex-1 px-4">Tarefa</div>
         <div className="w-40 px-4 text-center">Data da Entrega</div>
