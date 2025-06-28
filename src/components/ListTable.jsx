@@ -1,127 +1,105 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ListItem from './ListItem';
 import { BsFloppyFill } from "react-icons/bs";
+import { taskService } from '../services/apiService';
 
 const ListTable = () => {
     // Estados para controlar o formulário de nova tarefa
     const [showAddForm, setShowAddForm] = useState(false);
-    const [newTaskName, setNewTaskName] = useState('');
-    const [newTaskDueDate, setNewTaskDueDate] = useState('');
+    const [newTaskTitle, setNewTaskTitle] = useState('');
+    const [newTaskDescription, setNewTaskDescription] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [tasks, setTasks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Array inicial de 10 tarefas para demonstração
-    // Vai ser substituído quando a API vier
-    const [tasks, setTasks] = useState([
-        {
-            id: 1,
-            name: 'Implementar sistema de autenticação',
-            dueDate: 'Essa semana',
-            completed: false
-        },
-        {
-            id: 2,
-            name: 'Criar componentes da lista de tarefas',
-            dueDate: 'Depois de amanhã',
-            completed: true
-        },
-        {
-            id: 3,
-            name: 'Configurar banco de dados',
-            dueDate: 'Hoje de noite',
-            completed: false
-        },
-        {
-            id: 4,
-            name: 'Desenvolver API REST',
-            dueDate: 'Próximo domingo',
-            completed: false
-        },
-        {
-            id: 5,
-            name: 'Implementar validação de formulários',
-            dueDate: 'Segunda passada',
-            completed: true
-        },
-        {
-            id: 6,
-            name: 'Criar testes unitários',
-            dueDate: '31 de fevereiro',
-            completed: false
-        },
-        {
-            id: 7,
-            name: 'Configurar deploy da aplicação',
-            dueDate: '05 de janeiro',
-            completed: false
-        },
-        {
-            id: 8,
-            name: 'Documentar código e APIs',
-            dueDate: 'No dia dos pais',
-            completed: false
-        },
-        {
-            id: 9,
-            name: 'Realizar testes de integração',
-            dueDate: 'O mais rápido possível',
-            completed: false
-        },
-        {
-            id: 10,
-            name: 'Preparar apresentação final',
-            dueDate: 'Domingo, se Deus quiser',
-            completed: false
+    // Carregar tarefas quando o componente montar
+    useEffect(() => {
+        loadTasks();
+    }, []);
+
+    // Função para carregar tarefas da API
+    const loadTasks = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await taskService.getTasks();
+            setTasks(data);
+        } catch (err) {
+            console.error('Erro ao carregar tarefas:', err);
+            setError('Erro ao carregar tarefas. Tente novamente.');
+        } finally {
+            setLoading(false);
         }
-    ]);
+    };
 
     // Alternar o status de conclusão
-    const handleToggleComplete = (taskId) => {
-        setTasks(prevTasks =>
-            prevTasks.map(task =>
-                task.id === taskId ? { ...task, completed: !task.completed } : task
-            )
-        );
+    const handleToggleComplete = async (taskId) => {
+        try {
+            // Encontra a tarefa para pegar os dados atuais
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            // Atualiza a tarefa via API
+            const updatedTask = await taskService.updateTask(taskId, {
+                ...task,
+                completed: !task.completed
+            });
+
+            // Atualiza o estado local
+            setTasks(prevTasks =>
+                prevTasks.map(t =>
+                    t.id === taskId ? updatedTask : t
+                )
+            );
+        } catch (err) {
+            console.error('Erro ao alterar status da tarefa:', err);
+            setError('Erro ao alterar status da tarefa.');
+        }
     };
 
     // Excluir tarefa
-    const handleDeleteTask = (taskId) => {
-        setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+    const handleDeleteTask = async (taskId) => {
+        try {
+            // Exclui a tarefa via API
+            await taskService.deleteTask(taskId);
+
+            // Remove do estado local
+            setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+        } catch (err) {
+            console.error('Erro ao excluir tarefa:', err);
+            setError('Erro ao excluir tarefa.');
+        }
     };
 
     // Função para adicionar nova tarefa
     const handleAddTask = async (e) => {
         e.preventDefault();
         
-        if (!newTaskName.trim() || !newTaskDueDate.trim()) {
+        if (!newTaskTitle.trim() || !newTaskDescription.trim()) {
             return; // Não adiciona se campos estiverem vazios
         }
 
         setIsSubmitting(true);
 
         try {
-            // Simula delay da API
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            // Gera novo ID (maior ID existente + 1)
-            const newId = Math.max(...tasks.map(task => task.id), 0) + 1;
-
-            const newTask = {
-                id: newId,
-                name: newTaskName.trim(),
-                dueDate: newTaskDueDate.trim(),
-                completed: false
-            };
+            // Cria nova tarefa via API
+            const newTask = await taskService.createTask({
+                title: newTaskTitle.trim(),
+                description: newTaskDescription.trim()
+            });
 
             // Adiciona nova tarefa no topo da lista
             setTasks(prevTasks => [newTask, ...prevTasks]);
 
             // Limpa o formulário e fecha
-            setNewTaskName('');
-            setNewTaskDueDate('');
+            setNewTaskTitle('');
+            setNewTaskDescription('');
             setShowAddForm(false);
 
         } catch (error) {
             console.error('Erro ao adicionar tarefa:', error);
+            setError('Erro ao adicionar tarefa.');
         } finally {
             setIsSubmitting(false);
         }
@@ -129,13 +107,26 @@ const ListTable = () => {
 
     // Função para cancelar adição
     const handleCancelAdd = () => {
-        setNewTaskName('');
-        setNewTaskDueDate('');
+        setNewTaskTitle('');
+        setNewTaskDescription('');
         setShowAddForm(false);
     };
 
     return (
       <div className="w-full max-w-6xl mx-auto pb-6">
+        {/* Mensagem de erro */}
+        {error && (
+          <div className="mb-4 p-4 bg-red-500 text-white rounded-lg">
+            {error}
+            <button
+              onClick={() => setError(null)}
+              className="ml-4 text-sm underline hover:no-underline"
+            >
+              Fechar
+            </button>
+          </div>
+        )}
+
         {/* Botão para adicionar nova tarefa */}
         <div className="mb-6 flex justify-end">
           <button
@@ -153,34 +144,34 @@ const ListTable = () => {
             <h3 className="text-lg font-bold text-amber-100 mb-4">Adicionar Nova Tarefa</h3>
             <form onSubmit={handleAddTask} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Input nome da tarefa */}
+                {/* Input título da tarefa */}
                 <div>
-                  <label htmlFor="taskName" className="block text-sm font-medium text-amber-100 mb-2">
-                    Nome da Tarefa *
+                  <label htmlFor="taskTitle" className="block text-sm font-medium text-amber-100 mb-2">
+                    Título da Tarefa *
                   </label>
                   <input
                     type="text"
-                    id="taskName"
-                    value={newTaskName}
-                    onChange={(e) => setNewTaskName(e.target.value)}
+                    id="taskTitle"
+                    value={newTaskTitle}
+                    onChange={(e) => setNewTaskTitle(e.target.value)}
                     className="w-full p-3 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-amber-100"
-                    placeholder="Digite o nome da tarefa..."
+                    placeholder="Digite o título da tarefa..."
                     required
                   />
                 </div>
 
-                {/* Input data de entrega */}
+                {/* Input descrição */}
                 <div>
-                  <label htmlFor="taskDueDate" className="block text-sm font-medium text-amber-100 mb-2">
-                    Data de Entrega *
+                  <label htmlFor="taskDescription" className="block text-sm font-medium text-amber-100 mb-2">
+                    Descrição *
                   </label>
                   <input
                     type="text"
-                    id="taskDueDate"
-                    value={newTaskDueDate}
-                    onChange={(e) => setNewTaskDueDate(e.target.value)}
+                    id="taskDescription"
+                    value={newTaskDescription}
+                    onChange={(e) => setNewTaskDescription(e.target.value)}
                     className="w-full p-3 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-amber-100"
-                    placeholder="Ex: Amanhã, 15/01/2025, Esta semana..."
+                    placeholder="Ex: Descrição da tarefa..."
                     required
                   />
                 </div>
@@ -197,9 +188,9 @@ const ListTable = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting || !newTaskName.trim() || !newTaskDueDate.trim()}
+                  disabled={isSubmitting || !newTaskTitle.trim() || !newTaskDescription.trim()}
                   className={`px-6 py-2 rounded-lg transition-colors duration-200 font-medium ${
-                    isSubmitting || !newTaskName.trim() || !newTaskDueDate.trim()
+                    isSubmitting || !newTaskTitle.trim() || !newTaskDescription.trim()
                       ? 'bg-gray-500 cursor-not-allowed text-gray-300'
                       : 'bg-amber-500 hover:bg-amber-600 text-amber-50 cursor-pointer'
                   }`}
@@ -215,13 +206,18 @@ const ListTable = () => {
         <div className="flex items-center justify-between p-4 bg-neutral-800 border-b-2 border-amber-500 text-amber-100 font-bold">
           <div className="w-24 text-center">Concluído</div>
           <div className="flex-1 px-4">Tarefa</div>
-          <div className="w-40 px-4 text-center">Data da entrega</div>
+          <div className="w-40 px-4 text-center">Descrição</div>
           <div className="w-20 text-center">Excluir</div>
         </div>
 
         {/* Lista de tarefas */}
         <div className="bg-neutral-900 rounded-b-lg shadow-lg">
-          {tasks.length > 0 ? (
+          {loading ? (
+            <div className="p-8 text-center text-amber-100">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto mb-4"></div>
+              <p>Carregando tarefas...</p>
+            </div>
+          ) : tasks.length > 0 ? (
             tasks.map((task, index) => (
               <ListItem
                 key={task.id}

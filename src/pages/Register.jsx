@@ -5,7 +5,7 @@ import { useUser } from '../hooks/useUser';
 const Register = () => {
 const [toast, setToast] = useState(null);
 const [isSubmitting, setIsSubmitting] = useState(false);
-const { emailExists, addUser } = useUser();
+const { registerUser } = useUser();
 const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -15,35 +15,30 @@ const navigate = useNavigate();
     try {
       // Os dados do formulário
       const formData = new FormData(e.target);
-      const newUser = {
+      const userData = {
         name: formData.get('name'),
         email: formData.get('email'),
         password: formData.get('password')
       };
 
-      // Já preparando pra quando fizer a API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Pra ver se o email já existe
-      const emailAlreadyExists = emailExists(newUser.email);
+      // Registra o usuário usando o contexto que chama a API
+      const result = await registerUser(userData);
       
-      if (emailAlreadyExists) {
-        setToast({ type: 'error', message: 'Este email já está cadastrado.' });
+      if (result.success) {
+        setToast({ type: 'success', message: 'Cadastro realizado com sucesso! Você será redirecionado à tela de login em 3 segundos.' });
+        
+        // Redireciona para login depois de 3 segundos
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
+      } else {
+        setToast({ type: 'error', message: result.error || 'Erro ao realizar cadastro. Tente novamente.' });
         setTimeout(() => {
           setToast(null);
         }, 5000);
-      } else {
-        // Adiciona o novo usuário através do contexto
-        addUser(newUser);
-        
-        setToast({ type: 'success', message: 'Cadastro realizado com sucesso! Você será redirecionado à tela de login em 5 segundos.' });
-        
-        // Redireciona para login depois de 5 segundos
-        setTimeout(() => {
-          navigate('/login');
-        }, 5000);
       }
-    } catch {
+    } catch (error) {
+      console.error('Erro no cadastro:', error);
       setToast({ type: 'error', message: 'Erro ao realizar cadastro. Tente novamente.' });
       setTimeout(() => {
         setToast(null);
@@ -54,7 +49,7 @@ const navigate = useNavigate();
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full bg-neutral-900 text-amber-100 relative">
+    <div className="flex flex-col items-center justify-center h-full min-h-screen bg-neutral-900 text-amber-100 relative">
       {toast && (
         <div className={`fixed top-25 right-4 p-4 rounded-lg shadow-lg z-50 max-w-sm transition-all duration-300 ${
           toast.type === 'success' ? 'bg-blue-500 text-white' : 'bg-red-500 text-white'

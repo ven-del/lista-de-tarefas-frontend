@@ -25,11 +25,11 @@ const ListItem = ({ task, index, onToggleComplete, onDelete }) => {
           task.completed ? "line-through text-neutral-500" : "text-amber-100"
         }`}
       >
-        <p className="font-medium">{task.name}</p>
+        <p className="font-medium">{task.title}</p>
       </div>
       {/* Data de entrega */}
       <div className="w-40 px-4 text-center">
-        <p className="text-amber-100">{task.dueDate}</p>
+        <p className="text-amber-100">{task.description}</p>
       </div>
       {/* Botão de excluir */}
       <div className="w-20 flex justify-center">

@@ -6,6 +6,7 @@ import NotFound from "../pages/NotFound";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
 import ToDoList from "../pages/ToDoList";
+import PrivateRoute from "../components/PrivateRoute";
 
 const Paths = () => {
     return (  
@@ -16,7 +17,11 @@ const Paths = () => {
                         <Route index element={ <Home /> } />
                         <Route path="cadastro" element={ <Register /> } />
                         <Route path="login" element={<Login />} />
-                        <Route path="tarefas" element={ <ToDoList /> } />
+                        <Route path="tarefas" element={
+                            <PrivateRoute>
+                                <ToDoList />
+                            </PrivateRoute>
+                        } />
                         <Route path="*" element={ <NotFound /> } />
                     </Route>
                 </Routes>
