@@ -4,9 +4,11 @@ import Footer from "../components/Footer";
 
 const SiteLayout = () => {
     return ( 
-        <div className="flex flex-col h-screen justify-between">
+        <div className="flex flex-col min-h-screen">
             <Header />
-            <Outlet />
+            <main className="flex-1 flex flex-col">
+                <Outlet />
+            </main>
             <Footer />
         </div>
      );
