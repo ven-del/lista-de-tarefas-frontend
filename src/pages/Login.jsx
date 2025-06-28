@@ -22,7 +22,7 @@ const Login = () => {
       const result = await loginUser({ email, password });
       
       if (result.success) {
-        setToast({ type: 'success', message: `Bem-vindo, ${result.user.name}! Redirecionando para a página inicial...` });
+        setToast({ type: 'success', message: `Bem-vindo, ${result.name}! Redirecionando para a página inicial...` });
         
         // Redireciona para home depois de 2 segundos
         setTimeout(() => {
