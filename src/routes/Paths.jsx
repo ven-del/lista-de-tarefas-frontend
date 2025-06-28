@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "../contexts/UserContext";
 import Home from "../pages/Home";
-import SiteLayout from "../Layouts/SiteLayout";
+import SiteLayout from "../layouts/SiteLayout";
 import NotFound from "../pages/NotFound";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
