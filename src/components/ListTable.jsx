@@ -206,7 +206,7 @@ const ListTable = () => {
         <div className="flex items-center justify-between p-4 bg-neutral-800 border-b-2 border-amber-500 text-amber-100 font-bold">
           <div className="w-24 text-center">Concluído</div>
           <div className="flex-1 px-4">Tarefa</div>
-          <div className="w-40 px-4 text-center">Descrição</div>
+          <div className="w-40 px-4 text-center">Data da Entrega</div>
           <div className="w-20 text-center">Excluir</div>
         </div>
 
