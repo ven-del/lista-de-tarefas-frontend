@@ -170,7 +170,7 @@ const ListTable = () => {
                   htmlFor="taskDescription"
                   className="block text-sm font-medium text-amber-100 mb-2"
                 >
-                  Data de Entrega
+                  Data de Entrega *
                 </label>
                 <input
                   type="text"
