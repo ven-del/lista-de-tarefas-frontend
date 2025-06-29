@@ -3,26 +3,30 @@ import { useLocation } from 'react-router-dom';
 
 
 const titleMap = {
-  '/': {
-    document: 'Lista Dinâmica',
-    header: 'Boas-vindas à sua lista de tarefas dinâmica'
+  "/": {
+    document: "Lista Dinâmica",
+    header: "Boas-vindas à sua lista de tarefas dinâmica",
   },
-  '/cadastro': {
-    document: 'Cadastro',
-    header: 'Faça seu cadastro'
+  "/cadastro": {
+    document: "Cadastro",
+    header: "Faça seu cadastro",
   },
-  '/login': {
-    document: 'Login',
-    header: 'Faça seu login'
+  "/login": {
+    document: "Login",
+    header: "Faça seu login",
   },
-  '/tarefas': {
-    document: 'Lista Dinâmica',
-    header: 'Adicione, atualize ou remova itens.'
+  "/tarefas": {
+    document: "Lista Dinâmica",
+    header: "Adicione, atualize ou remova itens.",
+  },
+  "/admin": {
+    document: "Lista Dinâmica",
+    header: "Redirecionando para a página de administração.",
   },
   notFound: {
-    document: '404 - Not Found',
-    header: '404 - Página Não Encontrada'
-  }
+    document: "404 - Not Found",
+    header: "404 - Página Não Encontrada",
+  },
 };
 
 export const useTitle = () => {
